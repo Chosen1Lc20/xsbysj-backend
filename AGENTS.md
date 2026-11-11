@@ -11,7 +11,7 @@
 - Java 17
 - Spring Boot 3.5.16
 - Maven Wrapper
-- MyBatis 3.0.5
+- MyBatis-Plus 3.5.15
 - MySQL 8.0
 - Spring MVC RESTful API
 - 使用 Spring Boot 3 对应的 Jakarta EE 和 Tomcat 10.1+ 运行时
@@ -83,5 +83,19 @@
 .\mvnw.cmd test
 .\mvnw.cmd package
 ```
+
+## 数据库结构维护
+
+- 表结构的唯一权威定义文件是仓库根目录下的 `sql/create_table.sql`。
+- 每次更新表结构或新增数据表时，必须同步修改 `sql/create_table.sql`，确保文件中的建表 SQL 与数据库实际结构一致。更新表结构使用alter语句,新建表的时候使用create table语句
+- 后续对表的结构进行更新时，记得写入 `AGENTS.md` 文件中。
+- 不要在 `src/main/resources/db` 或其他目录维护重复的建表脚本。
+- 当前数据库为 `xsbysj`，建表操作不得删除或修改其他数据库。
+- 用户明确要求表之间不设置数据库外键。
+- 每张表都必须包含 `createTime`、`EditTime`、`UpdateTime` 三个 `DATETIME` 字段，默认值均为 `CURRENT_TIMESTAMP`，且只有 `UpdateTime` 配置 `ON UPDATE CURRENT_TIMESTAMP`。
+- 结构变更记录：2026-11-11 将 `user.username` 重命名为 `user.useraccount`，同步更新唯一索引及对应实体、Mapper XML 映射。
+- 结构变更记录：2026-11-11 为 `user` 表新增 `userNo` 字段，用于统一保存学号或工号，并添加唯一索引。
+- 结构变更记录：2026-11-11 为 `user` 表新增 `avatarUrl` 字段，用于保存用户头像地址。
+- 结构变更记录：2026-11-11 将全部业务表的主键改为 MyBatis-Plus 雪花 ID（`IdType.ASSIGN_ID`），移除数据库自增，不使用独立 UID 字段。
 
 提交代码前至少保证项目能够通过编译；涉及数据库或接口的改动应补充对应测试。不要在 `pom.xml` 中添加与 Maven 自身运行环境相关的 Guice 或 `maven-core` 依赖。

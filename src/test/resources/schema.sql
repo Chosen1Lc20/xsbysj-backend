@@ -1,0 +1,17 @@
+DROP TABLE IF EXISTS `user`;
+
+CREATE TABLE `user` (
+    `id` BIGINT NOT NULL PRIMARY KEY,
+    `useraccount` VARCHAR(64) NOT NULL,
+    `userNo` VARCHAR(64) NOT NULL,
+    `password` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(64) NOT NULL,
+    `role` VARCHAR(32) NOT NULL,
+    `dept` VARCHAR(128),
+    `avatarUrl` VARCHAR(512),
+    `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `EditTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdateTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (`useraccount`),
+    UNIQUE (`userNo`)
+);
