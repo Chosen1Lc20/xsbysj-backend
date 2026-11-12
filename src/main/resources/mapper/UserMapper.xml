@@ -11,7 +11,7 @@
             <result property="password" column="password" />
             <result property="name" column="name" />
             <result property="role" column="role" />
-            <result property="dept" column="dept" />
+            <result property="department" column="department" />
             <result property="avatarUrl" column="avatarUrl" />
             <result property="createtime" column="createTime" />
             <result property="edittime" column="EditTime" />
@@ -19,7 +19,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,useraccount,userNo,password,name,role,dept,avatarUrl,
+        id,useraccount,userNo,password,name,role,department,avatarUrl,
         createTime,EditTime,UpdateTime
     </sql>
 </mapper>

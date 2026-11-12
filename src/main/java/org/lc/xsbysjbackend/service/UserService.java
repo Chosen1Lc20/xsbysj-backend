@@ -74,4 +74,5 @@ public interface UserService extends IService<User> {
      * 判断用户是否为管理员。
      */
     boolean isAdmin(User user);
+
 }

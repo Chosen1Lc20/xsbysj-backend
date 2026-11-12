@@ -49,9 +49,9 @@ public class User {
     private String role;
 
     /**
-     * 部门
+     * 院系
      */
-    private String dept;
+    private String department;
 
     /**
      * 头像地址
@@ -92,7 +92,7 @@ public class User {
             && (this.getPassword() == null ? other.getPassword() == null : this.getPassword().equals(other.getPassword()))
             && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
             && (this.getRole() == null ? other.getRole() == null : this.getRole().equals(other.getRole()))
-            && (this.getDept() == null ? other.getDept() == null : this.getDept().equals(other.getDept()))
+            && (this.getDepartment() == null ? other.getDepartment() == null : this.getDepartment().equals(other.getDepartment()))
             && (this.getAvatarUrl() == null ? other.getAvatarUrl() == null : this.getAvatarUrl().equals(other.getAvatarUrl()))
             && (this.getCreatetime() == null ? other.getCreatetime() == null : this.getCreatetime().equals(other.getCreatetime()))
             && (this.getEdittime() == null ? other.getEdittime() == null : this.getEdittime().equals(other.getEdittime()))
@@ -109,7 +109,7 @@ public class User {
         result = prime * result + ((getPassword() == null) ? 0 : getPassword().hashCode());
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         result = prime * result + ((getRole() == null) ? 0 : getRole().hashCode());
-        result = prime * result + ((getDept() == null) ? 0 : getDept().hashCode());
+        result = prime * result + ((getDepartment() == null) ? 0 : getDepartment().hashCode());
         result = prime * result + ((getAvatarUrl() == null) ? 0 : getAvatarUrl().hashCode());
         result = prime * result + ((getCreatetime() == null) ? 0 : getCreatetime().hashCode());
         result = prime * result + ((getEdittime() == null) ? 0 : getEdittime().hashCode());
@@ -128,7 +128,7 @@ public class User {
         sb.append(", userNo=").append(userNo);
         sb.append(", name=").append(name);
         sb.append(", role=").append(role);
-        sb.append(", dept=").append(dept);
+        sb.append(", department=").append(department);
         sb.append(", avatarUrl=").append(avatarUrl);
         sb.append(", createtime=").append(createtime);
         sb.append(", edittime=").append(edittime);

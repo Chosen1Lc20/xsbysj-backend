@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `file_record`;
+DROP TABLE IF EXISTS `topic`;
 
 CREATE TABLE `user` (
     `id` BIGINT NOT NULL PRIMARY KEY,
@@ -8,7 +9,7 @@ CREATE TABLE `user` (
     `password` VARCHAR(255) NOT NULL,
     `name` VARCHAR(64) NOT NULL,
     `role` VARCHAR(32) NOT NULL,
-    `dept` VARCHAR(128),
+    `department` VARCHAR(128),
     `avatarUrl` VARCHAR(512),
     `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `EditTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -31,4 +32,20 @@ CREATE TABLE `file_record` (
     `EditTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `UpdateTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (`fileKey`)
+);
+
+CREATE TABLE `topic` (
+    `id` BIGINT NOT NULL PRIMARY KEY,
+    `teacherId` BIGINT NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `description` TEXT,
+    `type` VARCHAR(64),
+    `maxStudents` INT NOT NULL DEFAULT 1,
+    `status` VARCHAR(32) NOT NULL DEFAULT 'DRAFT',
+    `reviewerId` BIGINT,
+    `auditComment` VARCHAR(1000),
+    `reviewTime` TIMESTAMP,
+    `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `EditTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdateTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

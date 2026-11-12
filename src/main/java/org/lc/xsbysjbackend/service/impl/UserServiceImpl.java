@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.lc.xsbysjbackend.common.PasswordUtils;
 import org.lc.xsbysjbackend.constant.UserConstant;
 import org.lc.xsbysjbackend.exception.BusinessException;
 import org.lc.xsbysjbackend.exception.ErrorCode;
@@ -44,6 +45,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         String confirmPassword = userRegisterRequest.getConfirmPassword();
         String userNo = normalize(userRegisterRequest.getUserNo());
         String name = normalize(userRegisterRequest.getName());
+        String role = normalize(userRegisterRequest.getRole());
+        String department = normalizeNullable(userRegisterRequest.getDepartment());
 
         if (StrUtil.isBlank(useraccount)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号不能为空");
@@ -75,6 +78,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (name.length() > 64) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "姓名不能超过64个字符");
         }
+        if (department != null && department.length() > 128) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "院系不能超过128个字符");
+        }
+        if (StrUtil.isBlank(role)) {
+            role = UserConstant.STUDENT_ROLE;
+        }
+        if (!UserConstant.STUDENT_ROLE.equals(role)
+                && !UserConstant.TEACHER_ROLE.equals(role)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "公开注册用户类型只能为学生或教师");
+        }
 
         if (lambdaQuery().eq(User::getUseraccount, useraccount).count() > 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号已存在");
@@ -86,9 +99,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user = new User();
         user.setUseraccount(useraccount);
         user.setUserNo(userNo);
-        user.setPassword(password);
+        user.setPassword(PasswordUtils.encode(password));
         user.setName(name);
-        user.setRole(UserConstant.STUDENT_ROLE);
+        user.setRole(role);
+        user.setDepartment(department);
         try {
             if (!save(user)) {
                 throw new BusinessException(ErrorCode.OPERATION_ERROR, "注册失败");
@@ -100,6 +114,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public User userLogin(UserLoginRequest userLoginRequest) {
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "登录请求不能为空");
@@ -115,8 +130,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
 
         User user = lambdaQuery().eq(User::getUseraccount, useraccount).one();
-        if (user == null || !password.equals(user.getPassword())) {
+        if (user == null || !PasswordUtils.matches(password, user.getPassword())) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号或密码错误");
+        }
+        if (!PasswordUtils.isEncoded(user.getPassword())) {
+            String encodedPassword = PasswordUtils.encode(password);
+            boolean updated = lambdaUpdate()
+                    .eq(User::getId, user.getId())
+                    .set(User::getPassword, encodedPassword)
+                    .update();
+            if (!updated) {
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, "密码安全升级失败");
+            }
+            user.setPassword(encodedPassword);
         }
         return user;
     }
@@ -188,10 +214,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user = new User();
         user.setUseraccount(useraccount);
         user.setUserNo(userNo);
-        user.setPassword(password);
+        user.setPassword(PasswordUtils.encode(password));
         user.setName(name);
         user.setRole(role);
-        user.setDept(normalizeNullable(userAddRequest.getDept()));
+        user.setDepartment(normalizeNullable(userAddRequest.getDepartment()));
         user.setAvatarUrl(normalizeNullable(userAddRequest.getAvatarUrl()));
         try {
             if (!save(user)) {
@@ -214,6 +240,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (!removeById(id)) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "删除用户失败");
         }
+        StpUtil.logout(id);
         return true;
     }
 
@@ -231,6 +258,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public UserVO getUserVoById(long id) {
+        User currentUser = getLoginUser();
+        if (!isAdmin(currentUser) && !currentUser.getId().equals(id)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无权查看其他用户信息");
+        }
         return UserVO.fromUser(getUserById(id));
     }
 
@@ -246,6 +277,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User oldUser = getById(userId);
         if (oldUser == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "用户不存在");
+        }
+        User currentUser = getLoginUser();
+        if (!isAdmin(currentUser) && !currentUser.getId().equals(userId)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无权修改其他用户信息");
+        }
+        if (!isAdmin(currentUser) && userUpdateRequest.getRole() != null) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "普通用户不能修改角色");
         }
 
         LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<>();
@@ -275,7 +313,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             if (password.length() < 4 || password.length() > 13) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码长度必须在4到13之间");
             }
-            updateWrapper.set(User::getPassword, password);
+            updateWrapper.set(User::getPassword, PasswordUtils.encode(password));
             hasUpdate = true;
         }
         if (userUpdateRequest.getUserNo() != null) {
@@ -314,8 +352,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             updateWrapper.set(User::getRole, role);
             hasUpdate = true;
         }
-        if (userUpdateRequest.getDept() != null) {
-            updateWrapper.set(User::getDept, normalizeNullable(userUpdateRequest.getDept()));
+        if (userUpdateRequest.getDepartment() != null) {
+            String department = normalizeNullable(userUpdateRequest.getDepartment());
+            if (department != null && department.length() > 128) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "院系不能超过128个字符");
+            }
+            updateWrapper.set(User::getDepartment, department);
             hasUpdate = true;
         }
         if (userUpdateRequest.getAvatarUrl() != null) {
@@ -357,8 +399,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 User::getName, normalizeNullable(userQueryRequest.getName()));
         queryWrapper.eq(StrUtil.isNotBlank(userQueryRequest.getRole()),
                 User::getRole, normalizeNullable(userQueryRequest.getRole()));
-        queryWrapper.like(StrUtil.isNotBlank(userQueryRequest.getDept()),
-                User::getDept, normalizeNullable(userQueryRequest.getDept()));
+        queryWrapper.like(StrUtil.isNotBlank(userQueryRequest.getDepartment()),
+                User::getDepartment, normalizeNullable(userQueryRequest.getDepartment()));
         applyUserSort(queryWrapper, userQueryRequest.getSortField(), userQueryRequest.getSortOrder());
 
         Page<User> userPage = page(new Page<>(userQueryRequest.getCurrent(),
@@ -395,7 +437,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             case "userNo" -> queryWrapper.orderBy(true, ascending, User::getUserNo);
             case "name" -> queryWrapper.orderBy(true, ascending, User::getName);
             case "role" -> queryWrapper.orderBy(true, ascending, User::getRole);
-            case "dept" -> queryWrapper.orderBy(true, ascending, User::getDept);
+            case "department" -> queryWrapper.orderBy(true, ascending, User::getDepartment);
             case "createTime" -> queryWrapper.orderBy(true, ascending, User::getCreatetime);
             case "UpdateTime" -> queryWrapper.orderBy(true, ascending, User::getUpdatetime);
             default -> throw new BusinessException(ErrorCode.PARAMS_ERROR, "排序字段不合法");

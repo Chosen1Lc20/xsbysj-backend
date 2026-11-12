@@ -20,7 +20,7 @@ public class UserVO implements Serializable {
 
     private String role;
 
-    private String dept;
+    private String department;
 
     private String avatarUrl;
 
@@ -31,7 +31,7 @@ public class UserVO implements Serializable {
         userVO.setUserNo(user.getUserNo());
         userVO.setName(user.getName());
         userVO.setRole(user.getRole());
-        userVO.setDept(user.getDept());
+        userVO.setDepartment(user.getDepartment());
         userVO.setAvatarUrl(user.getAvatarUrl());
         return userVO;
     }

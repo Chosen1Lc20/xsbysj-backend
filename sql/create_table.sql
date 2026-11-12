@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `user` (
     `password` VARCHAR(255) NOT NULL COMMENT '密码',
     `name` VARCHAR(64) NOT NULL COMMENT '姓名',
     `role` VARCHAR(32) NOT NULL COMMENT '角色',
-    `dept` VARCHAR(128) DEFAULT NULL COMMENT '部门',
+    `department` VARCHAR(128) DEFAULT NULL COMMENT '院系',
     `avatarUrl` VARCHAR(512) DEFAULT NULL COMMENT '头像地址',
     `createTime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `EditTime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '编辑时间',
@@ -27,6 +27,25 @@ CREATE TABLE IF NOT EXISTS `user` (
     UNIQUE KEY `uk_user_userno` (`userNo`),
     KEY `idx_user_role` (`role`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户表';
+
+SET @rename_user_department = (
+    SELECT IF(
+        SUM(COLUMN_NAME = 'dept') = 1
+            AND SUM(COLUMN_NAME = 'department') = 0,
+        'ALTER TABLE `user` RENAME COLUMN `dept` TO `department`',
+        'SELECT 1'
+    )
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'user'
+      AND COLUMN_NAME IN ('dept', 'department')
+);
+PREPARE user_department_stmt FROM @rename_user_department;
+EXECUTE user_department_stmt;
+DEALLOCATE PREPARE user_department_stmt;
+
+ALTER TABLE `user`
+    MODIFY COLUMN `department` VARCHAR(128) DEFAULT NULL COMMENT '院系';
 
 CREATE TABLE IF NOT EXISTS `file_record` (
     `id` BIGINT UNSIGNED NOT NULL COMMENT '文件主键（雪花ID）',
@@ -62,6 +81,51 @@ CREATE TABLE IF NOT EXISTS `topic` (
     KEY `idx_topic_teacher` (`teacherId`),
     KEY `idx_topic_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='课题表';
+
+SET @add_topic_reviewer_id = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'ALTER TABLE `topic` ADD COLUMN `reviewerId` BIGINT UNSIGNED DEFAULT NULL COMMENT ''审核管理员主键'' AFTER `status`',
+        'SELECT 1'
+    )
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'topic'
+      AND COLUMN_NAME = 'reviewerId'
+);
+PREPARE topic_reviewer_stmt FROM @add_topic_reviewer_id;
+EXECUTE topic_reviewer_stmt;
+DEALLOCATE PREPARE topic_reviewer_stmt;
+
+SET @add_topic_audit_comment = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'ALTER TABLE `topic` ADD COLUMN `auditComment` VARCHAR(1000) DEFAULT NULL COMMENT ''审核意见'' AFTER `reviewerId`',
+        'SELECT 1'
+    )
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'topic'
+      AND COLUMN_NAME = 'auditComment'
+);
+PREPARE topic_audit_comment_stmt FROM @add_topic_audit_comment;
+EXECUTE topic_audit_comment_stmt;
+DEALLOCATE PREPARE topic_audit_comment_stmt;
+
+SET @add_topic_review_time = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'ALTER TABLE `topic` ADD COLUMN `reviewTime` DATETIME DEFAULT NULL COMMENT ''审核时间'' AFTER `auditComment`',
+        'SELECT 1'
+    )
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'topic'
+      AND COLUMN_NAME = 'reviewTime'
+);
+PREPARE topic_review_time_stmt FROM @add_topic_review_time;
+EXECUTE topic_review_time_stmt;
+DEALLOCATE PREPARE topic_review_time_stmt;
 
 CREATE TABLE IF NOT EXISTS `selection` (
     `id` BIGINT UNSIGNED NOT NULL COMMENT '选题主键（雪花ID）',

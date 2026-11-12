@@ -21,7 +21,7 @@ public class UserUpdateRequest implements Serializable {
 
     private String role;
 
-    private String dept;
+    private String department;
 
     private String avatarUrl;
 

@@ -98,5 +98,7 @@
 - 结构变更记录：2026-11-11 为 `user` 表新增 `avatarUrl` 字段，用于保存用户头像地址。
 - 结构变更记录：2026-11-11 将全部业务表的主键改为 MyBatis-Plus 雪花 ID（`IdType.ASSIGN_ID`），移除数据库自增，不使用独立 UID 字段。
 - 结构变更记录：2026-11-12 新增 `file_record` 表，用于记录上传用户、COS 对象键、访问地址、文件类型、扩展名、原始文件名、文件大小和媒体类型。
+- 结构变更记录：2026-11-12 为 `topic` 表新增 `reviewerId`、`auditComment`、`reviewTime` 字段，用于保存课题审核信息。
+- 结构变更记录：2026-11-12 将 `user.dept` 重命名为 `user.department`，字段含义由“部门”调整为“院系”，并同步更新实体、DTO、VO 与 Mapper。
 
 提交代码前至少保证项目能够通过编译；涉及数据库或接口的改动应补充对应测试。不要在 `pom.xml` 中添加与 Maven 自身运行环境相关的 Guice 或 `maven-core` 依赖。

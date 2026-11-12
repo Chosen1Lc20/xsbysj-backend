@@ -19,5 +19,15 @@ public class UserRegisterRequest implements Serializable {
 
     private String name;
 
+    /**
+     * 用户类型：student、teacher。
+     */
+    private String role;
+
+    /**
+     * 院系。
+     */
+    private String department;
+
     private static final long serialVersionUID = 1L;
 }

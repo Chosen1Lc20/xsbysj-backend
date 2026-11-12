@@ -1,6 +1,7 @@
 package org.lc.xsbysjbackend.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -55,7 +56,6 @@ public class UserController {
         session.setAttribute(UserConstant.USER_LOGIN_STATE, loginUser.getId());
 
         StpUtil.login(loginUser.getId());
-        StpUtil.getSession().set("userRole", loginUser.getRole());
         return ResultUtils.success(UserVO.fromUser(loginUser));
     }
 
@@ -74,59 +74,44 @@ public class UserController {
         return ResultUtils.success("退出成功");
     }
 
+    @SaCheckRole(UserConstant.ADMIN_ROLE)
     @PostMapping("/add")
     public BaseResponse<Long> addUser(@RequestBody UserAddRequest userAddRequest) {
-        requireAdmin();
         return ResultUtils.success(userService.addUser(userAddRequest));
     }
 
+    @SaCheckRole(UserConstant.ADMIN_ROLE)
     @PostMapping("/delete")
     public BaseResponse<Boolean> deleteUserById(@RequestBody DeleteRequest deleteRequest) {
-        requireAdmin();
         if (deleteRequest == null || deleteRequest.getId() == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户主键不能为空");
         }
         return ResultUtils.success(userService.deleteUserById(deleteRequest.getId()));
     }
 
+    @SaCheckRole(UserConstant.ADMIN_ROLE)
     @GetMapping("/get")
     public BaseResponse<User> getUserById(@RequestParam long id) {
-        requireAdmin();
         return ResultUtils.success(userService.getUserById(id));
     }
 
     @GetMapping("/get/vo")
     public BaseResponse<UserVO> getUserVoById(@RequestParam long id) {
-        User currentUser = userService.getLoginUser();
-        if (!userService.isAdmin(currentUser) && !currentUser.getId().equals(id)) {
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无权查看其他用户信息");
-        }
         return ResultUtils.success(userService.getUserVoById(id));
     }
 
     @PostMapping("/update")
     public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest) {
-        User currentUser = userService.getLoginUser();
         if (userUpdateRequest == null || userUpdateRequest.getId() == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户主键不能为空");
-        }
-        if (!userService.isAdmin(currentUser)
-                && !currentUser.getId().equals(userUpdateRequest.getId())) {
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无权修改其他用户信息");
         }
         return ResultUtils.success(userService.updateUser(userUpdateRequest));
     }
 
+    @SaCheckRole(UserConstant.ADMIN_ROLE)
     @PostMapping("/list/page/vo")
     public BaseResponse<IPage<UserVO>> listUserVoByPage(
             @RequestBody UserQueryRequest userQueryRequest) {
-        requireAdmin();
         return ResultUtils.success(userService.listUserVoByPage(userQueryRequest));
-    }
-
-    private void requireAdmin() {
-        if (!userService.isAdmin(userService.getLoginUser())) {
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "仅管理员可以执行该操作");
-        }
     }
 }

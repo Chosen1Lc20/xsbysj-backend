@@ -50,6 +50,21 @@ public class Topic {
     private String status;
 
     /**
+     * 审核管理员主键
+     */
+    private Long reviewerid;
+
+    /**
+     * 审核意见
+     */
+    private String auditcomment;
+
+    /**
+     * 审核时间
+     */
+    private Date reviewtime;
+
+    /**
      * 创建时间
      */
     private Date createtime;
@@ -83,6 +98,9 @@ public class Topic {
             && (this.getType() == null ? other.getType() == null : this.getType().equals(other.getType()))
             && (this.getMaxstudents() == null ? other.getMaxstudents() == null : this.getMaxstudents().equals(other.getMaxstudents()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
+            && (this.getReviewerid() == null ? other.getReviewerid() == null : this.getReviewerid().equals(other.getReviewerid()))
+            && (this.getAuditcomment() == null ? other.getAuditcomment() == null : this.getAuditcomment().equals(other.getAuditcomment()))
+            && (this.getReviewtime() == null ? other.getReviewtime() == null : this.getReviewtime().equals(other.getReviewtime()))
             && (this.getCreatetime() == null ? other.getCreatetime() == null : this.getCreatetime().equals(other.getCreatetime()))
             && (this.getEdittime() == null ? other.getEdittime() == null : this.getEdittime().equals(other.getEdittime()))
             && (this.getUpdatetime() == null ? other.getUpdatetime() == null : this.getUpdatetime().equals(other.getUpdatetime()));
@@ -99,6 +117,9 @@ public class Topic {
         result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
         result = prime * result + ((getMaxstudents() == null) ? 0 : getMaxstudents().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
+        result = prime * result + ((getReviewerid() == null) ? 0 : getReviewerid().hashCode());
+        result = prime * result + ((getAuditcomment() == null) ? 0 : getAuditcomment().hashCode());
+        result = prime * result + ((getReviewtime() == null) ? 0 : getReviewtime().hashCode());
         result = prime * result + ((getCreatetime() == null) ? 0 : getCreatetime().hashCode());
         result = prime * result + ((getEdittime() == null) ? 0 : getEdittime().hashCode());
         result = prime * result + ((getUpdatetime() == null) ? 0 : getUpdatetime().hashCode());
@@ -118,6 +139,9 @@ public class Topic {
         sb.append(", type=").append(type);
         sb.append(", maxstudents=").append(maxstudents);
         sb.append(", status=").append(status);
+        sb.append(", reviewerid=").append(reviewerid);
+        sb.append(", auditcomment=").append(auditcomment);
+        sb.append(", reviewtime=").append(reviewtime);
         sb.append(", createtime=").append(createtime);
         sb.append(", edittime=").append(edittime);
         sb.append(", updatetime=").append(updatetime);

@@ -2,6 +2,7 @@ package org.lc.xsbysjbackend.common;
 
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
+import cn.dev33.satoken.exception.NotRoleException;
 
 import lombok.extern.slf4j.Slf4j;
 import org.lc.xsbysjbackend.exception.BusinessException;
@@ -49,6 +50,12 @@ public class GlobalExceptionHandler {
     public BaseResponse<?> notPermissionExceptionHandler(NotPermissionException e) {
         log.error("NotPermissionException", e);
         return ResultUtils.error(ErrorCode.NO_AUTH_ERROR, e.getMessage());
+    }
+
+    @ExceptionHandler(NotRoleException.class)
+    public BaseResponse<?> notRoleExceptionHandler(NotRoleException e) {
+        log.warn("NotRoleException: {}", e.getMessage());
+        return ResultUtils.error(ErrorCode.NO_AUTH_ERROR, "无权限执行该操作");
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)

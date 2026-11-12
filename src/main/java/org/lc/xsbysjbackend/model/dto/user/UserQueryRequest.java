@@ -22,7 +22,7 @@ public class UserQueryRequest extends PageRequest implements Serializable {
 
     private String role;
 
-    private String dept;
+    private String department;
 
     private static final long serialVersionUID = 1L;
 }
