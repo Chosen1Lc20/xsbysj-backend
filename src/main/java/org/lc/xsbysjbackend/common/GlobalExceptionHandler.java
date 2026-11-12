@@ -8,6 +8,7 @@ import org.lc.xsbysjbackend.exception.BusinessException;
 import org.lc.xsbysjbackend.exception.ErrorCode;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 /**
  * 为了防止意料之外的异常,通过AOP切面对 BusinessException和RunTimeException进行捕获
@@ -48,6 +49,12 @@ public class GlobalExceptionHandler {
     public BaseResponse<?> notPermissionExceptionHandler(NotPermissionException e) {
         log.error("NotPermissionException", e);
         return ResultUtils.error(ErrorCode.NO_AUTH_ERROR, e.getMessage());
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public BaseResponse<?> maxUploadSizeExceededExceptionHandler(MaxUploadSizeExceededException e) {
+        log.warn("上传文件超过大小限制", e);
+        return ResultUtils.error(ErrorCode.PARAMS_ERROR, "上传文件大小不能超过50MB");
     }
 
 }

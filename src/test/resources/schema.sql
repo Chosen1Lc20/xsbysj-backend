@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `file_record`;
 
 CREATE TABLE `user` (
     `id` BIGINT NOT NULL PRIMARY KEY,
@@ -14,4 +15,20 @@ CREATE TABLE `user` (
     `UpdateTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (`useraccount`),
     UNIQUE (`userNo`)
+);
+
+CREATE TABLE `file_record` (
+    `id` BIGINT NOT NULL PRIMARY KEY,
+    `uploadUserId` BIGINT NOT NULL,
+    `fileKey` VARCHAR(512) NOT NULL,
+    `fileUrl` VARCHAR(512) NOT NULL,
+    `fileType` VARCHAR(32) NOT NULL,
+    `fileExtension` VARCHAR(16) NOT NULL,
+    `fileName` VARCHAR(255) NOT NULL,
+    `fileSize` BIGINT NOT NULL,
+    `contentType` VARCHAR(128) NOT NULL,
+    `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `EditTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdateTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (`fileKey`)
 );

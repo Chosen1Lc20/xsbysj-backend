@@ -97,30 +97,30 @@ public class CosManager {
      * @param key 唯一键
      * @return
      */
-    public String uploadFileToCOS(MultipartFile multipartFile,String key) throws IOException {
-        InputStream multipartFileIns = null;
-        try {
-            multipartFileIns = multipartFile.getInputStream();
+    public String uploadFileToCOS(MultipartFile multipartFile, String key, String contentType)
+            throws IOException {
+        try (InputStream multipartFileIns = multipartFile.getInputStream()) {
             ObjectMetadata objectMetadata = new ObjectMetadata();
-            //设置元数据
-            objectMetadata.setContentType(multipartFile.getContentType());
+            objectMetadata.setContentType(contentType);
             objectMetadata.setContentLength(multipartFile.getSize());
-            PutObjectRequest putObjectRequest = new PutObjectRequest(cosClientConfig.getBucket(),key,multipartFileIns,objectMetadata);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(
+                    cosClientConfig.getBucket(),
+                    key,
+                    multipartFileIns,
+                    objectMetadata
+            );
 
-            PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
+            cosClient.putObject(putObjectRequest);
             //示例链接
-            //https://lcbucket-1411346346.cos.ap-beijing.myqcloud.com/public/
-            //                                 2029839156843589633/2026-03-15-20-49-55_8NoNzRGN4ISLN5pA.jpg
+            //https://lcbucket-1411346346.cos.ap-beijing.myqcloud.com/avatar/
+            //                                 2029839156843589633/20260315/8NoNzRGN4ISLN5pA.jpg
             //生成访问链接
-            return "https://"+cosClientConfig.getBucket()+".cos."+cosClientConfig.getRegion()+".myqclound.com/"+
-                            key;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            //用了流最后一定要关闭
-            if(multipartFileIns != null){
-                multipartFileIns.close();
+            String host = cosClientConfig.getHost();
+            if (host == null || host.isBlank()) {
+                host = "https://" + cosClientConfig.getBucket()
+                        + ".cos." + cosClientConfig.getRegion() + ".myqcloud.com";
             }
+            return host.replaceAll("/+$", "") + "/" + key;
         }
     }
 

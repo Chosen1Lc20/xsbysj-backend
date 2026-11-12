@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.lc.xsbysjbackend.mapper.FileRecordMapper">
+
+    <resultMap id="BaseResultMap" type="org.lc.xsbysjbackend.model.entity.FileRecord">
+            <id property="id" column="id" />
+            <result property="uploadUserId" column="uploadUserId" />
+            <result property="fileKey" column="fileKey" />
+            <result property="fileUrl" column="fileUrl" />
+            <result property="fileType" column="fileType" />
+            <result property="fileExtension" column="fileExtension" />
+            <result property="fileName" column="fileName" />
+            <result property="fileSize" column="fileSize" />
+            <result property="contentType" column="contentType" />
+            <result property="createTime" column="createTime" />
+            <result property="editTime" column="EditTime" />
+            <result property="updateTime" column="UpdateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,uploadUserId,fileKey,fileUrl,fileType,fileExtension,
+        fileName,fileSize,contentType,createTime,EditTime,
+        UpdateTime
+    </sql>
+</mapper>

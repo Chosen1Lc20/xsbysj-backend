@@ -28,6 +28,25 @@ CREATE TABLE IF NOT EXISTS `user` (
     KEY `idx_user_role` (`role`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户表';
 
+CREATE TABLE IF NOT EXISTS `file_record` (
+    `id` BIGINT UNSIGNED NOT NULL COMMENT '文件主键（雪花ID）',
+    `uploadUserId` BIGINT UNSIGNED NOT NULL COMMENT '上传用户主键',
+    `fileKey` VARCHAR(512) NOT NULL COMMENT 'COS对象键',
+    `fileUrl` VARCHAR(512) NOT NULL COMMENT '文件访问地址',
+    `fileType` VARCHAR(32) NOT NULL COMMENT '文件类型：avatar、attachment',
+    `fileExtension` VARCHAR(16) NOT NULL COMMENT '文件扩展名',
+    `fileName` VARCHAR(255) NOT NULL COMMENT '原始文件名',
+    `fileSize` BIGINT UNSIGNED NOT NULL COMMENT '文件大小（字节）',
+    `contentType` VARCHAR(128) NOT NULL COMMENT '文件媒体类型',
+    `createTime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `EditTime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '编辑时间',
+    `UpdateTime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_file_record_file_key` (`fileKey`),
+    KEY `idx_file_record_upload_user` (`uploadUserId`),
+    KEY `idx_file_record_type` (`fileType`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='文件记录表';
+
 CREATE TABLE IF NOT EXISTS `topic` (
     `id` BIGINT UNSIGNED NOT NULL COMMENT '课题主键（雪花ID）',
     `teacherId` BIGINT UNSIGNED NOT NULL COMMENT '教师用户主键',
