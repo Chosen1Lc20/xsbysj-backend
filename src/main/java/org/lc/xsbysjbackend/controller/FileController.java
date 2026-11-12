@@ -1,9 +1,11 @@
 package org.lc.xsbysjbackend.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import lombok.RequiredArgsConstructor;
 import org.lc.xsbysjbackend.common.BaseResponse;
 import org.lc.xsbysjbackend.common.ResultUtils;
+import org.lc.xsbysjbackend.constant.PermissionConstant;
 import org.lc.xsbysjbackend.model.vo.FileUploadVO;
 import org.lc.xsbysjbackend.service.FileRecordService;
 import org.springframework.http.MediaType;
@@ -27,6 +29,7 @@ public class FileController {
     /**
      * 上传头像或毕业设计相关文档。
      */
+    @SaCheckPermission(PermissionConstant.FILE_UPLOAD)
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BaseResponse<FileUploadVO> uploadFile(@RequestPart("file") MultipartFile file) {
         long userId = StpUtil.getLoginIdAsLong();
@@ -36,6 +39,7 @@ public class FileController {
     /**
      * 编辑文件：上传新文件时替换原文件，否则修改文件名。
      */
+    @SaCheckPermission(PermissionConstant.FILE_UPDATE)
     @PostMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BaseResponse<FileUploadVO> updateFile(
             @RequestParam("id") Long id,

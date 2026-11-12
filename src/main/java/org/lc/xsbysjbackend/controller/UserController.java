@@ -1,7 +1,7 @@
 package org.lc.xsbysjbackend.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
-import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -10,6 +10,7 @@ import org.lc.xsbysjbackend.common.BaseResponse;
 import org.lc.xsbysjbackend.common.DeleteRequest;
 import org.lc.xsbysjbackend.common.ResultUtils;
 import org.lc.xsbysjbackend.constant.UserConstant;
+import org.lc.xsbysjbackend.constant.PermissionConstant;
 import org.lc.xsbysjbackend.exception.BusinessException;
 import org.lc.xsbysjbackend.exception.ErrorCode;
 import org.lc.xsbysjbackend.model.dto.user.UserAddRequest;
@@ -74,13 +75,13 @@ public class UserController {
         return ResultUtils.success("退出成功");
     }
 
-    @SaCheckRole(UserConstant.ADMIN_ROLE)
+    @SaCheckPermission(PermissionConstant.USER_ADD)
     @PostMapping("/add")
     public BaseResponse<Long> addUser(@RequestBody UserAddRequest userAddRequest) {
         return ResultUtils.success(userService.addUser(userAddRequest));
     }
 
-    @SaCheckRole(UserConstant.ADMIN_ROLE)
+    @SaCheckPermission(PermissionConstant.USER_DELETE)
     @PostMapping("/delete")
     public BaseResponse<Boolean> deleteUserById(@RequestBody DeleteRequest deleteRequest) {
         if (deleteRequest == null || deleteRequest.getId() == null) {
@@ -89,7 +90,7 @@ public class UserController {
         return ResultUtils.success(userService.deleteUserById(deleteRequest.getId()));
     }
 
-    @SaCheckRole(UserConstant.ADMIN_ROLE)
+    @SaCheckPermission(PermissionConstant.USER_GET)
     @GetMapping("/get")
     public BaseResponse<User> getUserById(@RequestParam long id) {
         return ResultUtils.success(userService.getUserById(id));
@@ -108,7 +109,7 @@ public class UserController {
         return ResultUtils.success(userService.updateUser(userUpdateRequest));
     }
 
-    @SaCheckRole(UserConstant.ADMIN_ROLE)
+    @SaCheckPermission(PermissionConstant.USER_LIST)
     @PostMapping("/list/page/vo")
     public BaseResponse<IPage<UserVO>> listUserVoByPage(
             @RequestBody UserQueryRequest userQueryRequest) {

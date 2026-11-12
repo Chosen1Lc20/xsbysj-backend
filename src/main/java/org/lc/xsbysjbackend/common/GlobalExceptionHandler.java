@@ -48,8 +48,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(NotPermissionException.class)
     public BaseResponse<?> notPermissionExceptionHandler(NotPermissionException e) {
-        log.error("NotPermissionException", e);
-        return ResultUtils.error(ErrorCode.NO_AUTH_ERROR, e.getMessage());
+        log.warn("NotPermissionException: {}", e.getMessage());
+        return ResultUtils.error(ErrorCode.NO_AUTH_ERROR, "无权限执行该操作");
     }
 
     @ExceptionHandler(NotRoleException.class)

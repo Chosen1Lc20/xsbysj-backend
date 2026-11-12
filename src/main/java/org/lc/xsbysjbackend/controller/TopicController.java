@@ -1,12 +1,12 @@
 package org.lc.xsbysjbackend.controller;
 
-import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.RequiredArgsConstructor;
 import org.lc.xsbysjbackend.common.BaseResponse;
 import org.lc.xsbysjbackend.common.DeleteRequest;
 import org.lc.xsbysjbackend.common.ResultUtils;
-import org.lc.xsbysjbackend.constant.UserConstant;
+import org.lc.xsbysjbackend.constant.PermissionConstant;
 import org.lc.xsbysjbackend.exception.BusinessException;
 import org.lc.xsbysjbackend.exception.ErrorCode;
 import org.lc.xsbysjbackend.model.dto.topic.TopicAddRequest;
@@ -32,19 +32,19 @@ public class TopicController {
 
     private final TopicService topicService;
 
-    @SaCheckRole(UserConstant.TEACHER_ROLE)
+    @SaCheckPermission(PermissionConstant.TOPIC_ADD)
     @PostMapping("/add")
     public BaseResponse<Long> addTopic(@RequestBody TopicAddRequest topicAddRequest) {
         return ResultUtils.success(topicService.addTopic(topicAddRequest));
     }
 
-    @SaCheckRole(UserConstant.TEACHER_ROLE)
+    @SaCheckPermission(PermissionConstant.TOPIC_UPDATE)
     @PostMapping("/update")
     public BaseResponse<Boolean> updateTopic(@RequestBody TopicUpdateRequest topicUpdateRequest) {
         return ResultUtils.success(topicService.updateTopic(topicUpdateRequest));
     }
 
-    @SaCheckRole(UserConstant.TEACHER_ROLE)
+    @SaCheckPermission(PermissionConstant.TOPIC_DELETE)
     @PostMapping("/delete")
     public BaseResponse<Boolean> deleteTopic(@RequestBody DeleteRequest deleteRequest) {
         if (deleteRequest == null || deleteRequest.getId() == null) {
@@ -53,7 +53,7 @@ public class TopicController {
         return ResultUtils.success(topicService.deleteTopic(deleteRequest.getId()));
     }
 
-    @SaCheckRole(UserConstant.TEACHER_ROLE)
+    @SaCheckPermission(PermissionConstant.TOPIC_SUBMIT)
     @PostMapping("/submit")
     public BaseResponse<Boolean> submitTopicReview(@RequestBody DeleteRequest deleteRequest) {
         if (deleteRequest == null || deleteRequest.getId() == null) {
@@ -62,17 +62,19 @@ public class TopicController {
         return ResultUtils.success(topicService.submitTopicReview(deleteRequest.getId()));
     }
 
-    @SaCheckRole(UserConstant.ADMIN_ROLE)
+    @SaCheckPermission(PermissionConstant.TOPIC_REVIEW)
     @PostMapping("/review")
     public BaseResponse<Boolean> reviewTopic(@RequestBody TopicReviewRequest topicReviewRequest) {
         return ResultUtils.success(topicService.reviewTopic(topicReviewRequest));
     }
 
+    @SaCheckPermission(PermissionConstant.TOPIC_READ)
     @GetMapping("/get/vo")
     public BaseResponse<TopicVO> getTopicVoById(@RequestParam long id) {
         return ResultUtils.success(topicService.getTopicVoById(id));
     }
 
+    @SaCheckPermission(PermissionConstant.TOPIC_READ)
     @PostMapping("/list/page/vo")
     public BaseResponse<IPage<TopicVO>> listTopicVoByPage(
             @RequestBody TopicQueryRequest topicQueryRequest) {

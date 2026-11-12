@@ -18,24 +18,34 @@ public class StpInterfaceImpl implements StpInterface {
 
     private final UserMapper userMapper;
 
+    private final PermissionConfig permissionConfig;
+
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        return List.of();
+        User user = getUser(loginId);
+        if (user == null) {
+            return List.of();
+        }
+        return List.copyOf(permissionConfig.getPermissions(user.getRole()));
     }
 
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        if (loginId == null) {
+        User user = getUser(loginId);
+        if (user == null || !StringUtils.hasText(user.getRole())) {
             return List.of();
         }
+        return List.of(user.getRole());
+    }
+
+    private User getUser(Object loginId) {
+        if (loginId == null) {
+            return null;
+        }
         try {
-            User user = userMapper.selectById(Long.parseLong(loginId.toString()));
-            if (user == null || !StringUtils.hasText(user.getRole())) {
-                return List.of();
-            }
-            return List.of(user.getRole());
+            return userMapper.selectById(Long.parseLong(loginId.toString()));
         } catch (NumberFormatException e) {
-            return List.of();
+            return null;
         }
     }
 }

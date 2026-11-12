@@ -1,0 +1,26 @@
+{
+  "student": [
+    "topic:read",
+    "file:upload",
+    "file:update"
+  ],
+  "teacher": [
+    "topic:add",
+    "topic:update",
+    "topic:delete",
+    "topic:submit",
+    "topic:read",
+    "file:upload",
+    "file:update"
+  ],
+  "admin": [
+    "user:add",
+    "user:delete",
+    "user:get",
+    "user:list",
+    "topic:review",
+    "topic:read",
+    "file:upload",
+    "file:update"
+  ]
+}
