@@ -6,9 +6,15 @@
 
     <resultMap id="BaseResultMap" type="org.lc.xsbysjbackend.model.entity.Assignment">
             <id property="id" column="id" />
+            <result property="selectionid" column="selectionId" />
+            <result property="teacherid" column="teacherId" />
             <result property="topicid" column="topicId" />
+            <result property="title" column="title" />
             <result property="content" column="content" />
             <result property="attachment" column="attachment" />
+            <result property="filerecordid" column="fileRecordId" />
+            <result property="deadline" column="deadline" />
+            <result property="status" column="status" />
             <result property="issuetime" column="issueTime" />
             <result property="createtime" column="createTime" />
             <result property="edittime" column="EditTime" />
@@ -16,7 +22,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,topicId,content,attachment,issueTime,createTime,
-        EditTime,UpdateTime
+        id,selectionId,teacherId,topicId,title,content,attachment,
+        fileRecordId,deadline,status,issueTime,createTime,EditTime,
+        UpdateTime
     </sql>
 </mapper>

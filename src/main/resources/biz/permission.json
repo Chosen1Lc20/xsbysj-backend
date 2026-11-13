@@ -1,19 +1,39 @@
 {
   "student": [
+    "user:teacher:list",
     "topic:read",
     "file:upload",
-    "file:update"
+    "file:update",
+    "selection:apply",
+    "selection:cancel",
+    "selection:read",
+    "assignment:read",
+    "document:submit",
+    "document:read",
+    "defense:read"
   ],
   "teacher": [
+    "user:teacher:list",
     "topic:add",
     "topic:update",
     "topic:delete",
     "topic:submit",
     "topic:read",
     "file:upload",
-    "file:update"
+    "file:update",
+    "selection:review",
+    "selection:read",
+    "assignment:add",
+    "assignment:update",
+    "assignment:delete",
+    "assignment:issue",
+    "assignment:read",
+    "document:review",
+    "document:read",
+    "defense:read"
   ],
   "admin": [
+    "user:teacher:list",
     "user:add",
     "user:delete",
     "user:get",
@@ -21,6 +41,13 @@
     "topic:review",
     "topic:read",
     "file:upload",
-    "file:update"
+    "file:update",
+    "selection:read",
+    "assignment:read",
+    "document:read",
+    "defense:add",
+    "defense:update",
+    "defense:delete",
+    "defense:read"
   ]
 }

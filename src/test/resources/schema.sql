@@ -1,6 +1,12 @@
 DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `file_record`;
 DROP TABLE IF EXISTS `topic`;
+DROP TABLE IF EXISTS `selection`;
+DROP TABLE IF EXISTS `assignment`;
+DROP TABLE IF EXISTS `report`;
+DROP TABLE IF EXISTS `defense_group_teacher`;
+DROP TABLE IF EXISTS `defense_group_student`;
+DROP TABLE IF EXISTS `defense_group`;
 
 CREATE TABLE `user` (
     `id` BIGINT NOT NULL PRIMARY KEY,
@@ -48,4 +54,94 @@ CREATE TABLE `topic` (
     `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `EditTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `UpdateTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `selection` (
+    `id` BIGINT NOT NULL PRIMARY KEY,
+    `studentId` BIGINT NOT NULL,
+    `topicId` BIGINT NOT NULL,
+    `selectionTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `status` VARCHAR(32) NOT NULL DEFAULT 'PENDING',
+    `reviewerId` BIGINT,
+    `auditComment` VARCHAR(1000),
+    `reviewTime` TIMESTAMP,
+    `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `EditTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdateTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (`studentId`, `topicId`)
+);
+
+CREATE TABLE `assignment` (
+    `id` BIGINT NOT NULL PRIMARY KEY,
+    `selectionId` BIGINT NOT NULL,
+    `teacherId` BIGINT NOT NULL,
+    `topicId` BIGINT NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `content` TEXT,
+    `attachment` VARCHAR(512),
+    `fileRecordId` BIGINT,
+    `deadline` TIMESTAMP,
+    `status` VARCHAR(32) NOT NULL DEFAULT 'DRAFT',
+    `issueTime` TIMESTAMP,
+    `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `EditTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdateTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (`selectionId`)
+);
+
+CREATE TABLE `report` (
+    `id` BIGINT NOT NULL PRIMARY KEY,
+    `studentId` BIGINT NOT NULL,
+    `selectionId` BIGINT NOT NULL,
+    `topicId` BIGINT NOT NULL,
+    `teacherId` BIGINT NOT NULL,
+    `documentType` VARCHAR(64) NOT NULL,
+    `filePath` VARCHAR(512) NOT NULL,
+    `fileRecordId` BIGINT NOT NULL,
+    `version` INT NOT NULL DEFAULT 1,
+    `isLatest` BOOLEAN NOT NULL DEFAULT TRUE,
+    `submitTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `auditStatus` VARCHAR(32) NOT NULL DEFAULT 'PENDING',
+    `reviewerId` BIGINT,
+    `auditComment` VARCHAR(1000),
+    `reviewTime` TIMESTAMP,
+    `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `EditTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdateTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (`selectionId`, `documentType`, `version`)
+);
+
+CREATE TABLE `defense_group` (
+    `id` BIGINT NOT NULL PRIMARY KEY,
+    `groupName` VARCHAR(64) NOT NULL,
+    `defenseTime` TIMESTAMP NOT NULL,
+    `location` VARCHAR(255) NOT NULL,
+    `remark` VARCHAR(500),
+    `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `EditTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdateTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (`groupName`)
+);
+
+CREATE TABLE `defense_group_teacher` (
+    `id` BIGINT NOT NULL PRIMARY KEY,
+    `groupId` BIGINT NOT NULL,
+    `teacherId` BIGINT NOT NULL,
+    `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `EditTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdateTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (`groupId`, `teacherId`)
+);
+
+CREATE TABLE `defense_group_student` (
+    `id` BIGINT NOT NULL PRIMARY KEY,
+    `groupId` BIGINT NOT NULL,
+    `studentId` BIGINT NOT NULL,
+    `selectionId` BIGINT NOT NULL,
+    `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `EditTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdateTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (`groupId`, `studentId`),
+    UNIQUE (`studentId`),
+    UNIQUE (`selectionId`)
 );

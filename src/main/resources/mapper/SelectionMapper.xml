@@ -10,13 +10,16 @@
             <result property="topicid" column="topicId" />
             <result property="selectiontime" column="selectionTime" />
             <result property="status" column="status" />
+            <result property="reviewerid" column="reviewerId" />
+            <result property="auditcomment" column="auditComment" />
+            <result property="reviewtime" column="reviewTime" />
             <result property="createtime" column="createTime" />
             <result property="edittime" column="EditTime" />
             <result property="updatetime" column="UpdateTime" />
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,studentId,topicId,selectionTime,status,createTime,
-        EditTime,UpdateTime
+        id,studentId,topicId,selectionTime,status,reviewerId,
+        auditComment,reviewTime,createTime,EditTime,UpdateTime
     </sql>
 </mapper>

@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -328,6 +329,27 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(40101))
                 .andExpect(jsonPath("$.message").value("普通用户不能修改角色"));
+    }
+
+    @Test
+    void studentCanReadTeacherOptions() throws Exception {
+        UserAddRequest teacherRequest = new UserAddRequest();
+        teacherRequest.setUseraccount("filterteacher");
+        teacherRequest.setPassword("123456");
+        teacherRequest.setUserNo("T20264001");
+        teacherRequest.setName("筛选教师");
+        teacherRequest.setRole(UserConstant.TEACHER_ROLE);
+        teacherRequest.setDepartment("计算机学院");
+        userService.addUser(teacherRequest);
+
+        Cookie token = registerStudentAndLogin("filterstudent01", "S20264001");
+        mockMvc.perform(get("/api/user/teachers")
+                        .cookie(token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(0))
+                .andExpect(jsonPath("$.data[*].userNo", hasItem("T20264001")))
+                .andExpect(jsonPath("$.data[*].name", hasItem("筛选教师")))
+                .andExpect(jsonPath("$.data[*].department", hasItem("计算机学院")));
     }
 
     @Test

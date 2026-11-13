@@ -61,7 +61,10 @@ class TopicControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(0))
                 .andExpect(jsonPath("$.data.total").value(1))
-                .andExpect(jsonPath("$.data.records[0].status").value("PENDING"));
+                .andExpect(jsonPath("$.data.records[0].status").value("PENDING"))
+                .andExpect(jsonPath("$.data.records[0].maxStudents").value(2))
+                .andExpect(jsonPath("$.data.records[0].selectedCount").value(0))
+                .andExpect(jsonPath("$.data.records[0].remainingSlots").value(2));
 
         reviewTopic(adminToken, topicId, true, "审核通过");
 
@@ -74,7 +77,9 @@ class TopicControllerTest {
                 .andExpect(jsonPath("$.data.total").value(1))
                 .andExpect(jsonPath("$.data.records[0].status").value("APPROVED"))
                 .andExpect(jsonPath("$.data.records[0].teacherName").value("课题教师"))
-                .andExpect(jsonPath("$.data.records[0].teacherDepartment").value("计算机学院"));
+                .andExpect(jsonPath("$.data.records[0].teacherDepartment").value("计算机学院"))
+                .andExpect(jsonPath("$.data.records[0].selectedCount").value(0))
+                .andExpect(jsonPath("$.data.records[0].remainingSlots").value(2));
 
         mockMvc.perform(get("/api/topic/get/vo")
                         .param("id", topicId)

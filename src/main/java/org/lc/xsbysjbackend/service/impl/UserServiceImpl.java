@@ -17,12 +17,15 @@ import org.lc.xsbysjbackend.model.dto.user.UserQueryRequest;
 import org.lc.xsbysjbackend.model.dto.user.UserRegisterRequest;
 import org.lc.xsbysjbackend.model.dto.user.UserUpdateRequest;
 import org.lc.xsbysjbackend.model.entity.User;
+import org.lc.xsbysjbackend.model.vo.TeacherOptionVO;
 import org.lc.xsbysjbackend.model.vo.UserVO;
 import org.lc.xsbysjbackend.service.UserService;
 import org.lc.xsbysjbackend.mapper.UserMapper;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
 * @author lianchao0921
@@ -414,6 +417,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public boolean isAdmin(User user) {
         return user != null && UserConstant.ADMIN_ROLE.equals(user.getRole());
+    }
+
+    @Override
+    public List<TeacherOptionVO> listTeacherOptions() {
+        return lambdaQuery()
+                .eq(User::getRole, UserConstant.TEACHER_ROLE)
+                .select(
+                        User::getId,
+                        User::getUserNo,
+                        User::getName,
+                        User::getDepartment
+                )
+                .orderByAsc(User::getName)
+                .list()
+                .stream()
+                .map(TeacherOptionVO::fromUser)
+                .toList();
     }
 
     private static String normalize(String value) {

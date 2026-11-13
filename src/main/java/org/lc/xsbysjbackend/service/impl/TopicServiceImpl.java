@@ -10,13 +10,16 @@ import lombok.RequiredArgsConstructor;
 import org.lc.xsbysjbackend.constant.UserConstant;
 import org.lc.xsbysjbackend.exception.BusinessException;
 import org.lc.xsbysjbackend.exception.ErrorCode;
+import org.lc.xsbysjbackend.mapper.SelectionMapper;
 import org.lc.xsbysjbackend.mapper.TopicMapper;
 import org.lc.xsbysjbackend.model.dto.topic.TopicAddRequest;
 import org.lc.xsbysjbackend.model.dto.topic.TopicQueryRequest;
 import org.lc.xsbysjbackend.model.dto.topic.TopicReviewRequest;
 import org.lc.xsbysjbackend.model.dto.topic.TopicUpdateRequest;
 import org.lc.xsbysjbackend.model.entity.Topic;
+import org.lc.xsbysjbackend.model.entity.Selection;
 import org.lc.xsbysjbackend.model.entity.User;
+import org.lc.xsbysjbackend.model.enums.SelectionStatusEnum;
 import org.lc.xsbysjbackend.model.enums.TopicStatusEnum;
 import org.lc.xsbysjbackend.model.vo.TopicVO;
 import org.lc.xsbysjbackend.service.TopicService;
@@ -51,6 +54,8 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic>
     private static final int MAX_STUDENTS_LIMIT = 20;
 
     private final UserService userService;
+
+    private final SelectionMapper selectionMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -200,7 +205,11 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic>
     public TopicVO getTopicVoById(long id) {
         Topic topic = getTopicOrThrow(id);
         checkViewPermission(topic, userService.getLoginUser());
-        return toTopicVo(topic, userService.getById(topic.getTeacherid()));
+        return toTopicVo(
+                topic,
+                userService.getById(topic.getTeacherid()),
+                countApprovedSelections(topic.getId())
+        );
     }
 
     @Override
@@ -230,13 +239,18 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic>
                 queryWrapper
         );
         Map<Long, User> teacherMap = getTeacherMap(topicPage.getRecords());
+        Map<Long, Long> selectedCountMap = getSelectedCountMap(topicPage.getRecords());
         Page<TopicVO> topicVoPage = new Page<>(
                 topicPage.getCurrent(),
                 topicPage.getSize(),
                 topicPage.getTotal()
         );
         topicVoPage.setRecords(topicPage.getRecords().stream()
-                .map(topic -> toTopicVo(topic, teacherMap.get(topic.getTeacherid())))
+                .map(topic -> toTopicVo(
+                        topic,
+                        teacherMap.get(topic.getTeacherid()),
+                        selectedCountMap.getOrDefault(topic.getId(), 0L)
+                ))
                 .toList());
         return topicVoPage;
     }
@@ -378,8 +392,31 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic>
                 .collect(Collectors.toMap(User::getId, Function.identity()));
     }
 
-    private TopicVO toTopicVo(Topic topic, User teacher) {
-        return TopicVO.fromTopic(topic, teacher);
+    private long countApprovedSelections(long topicId) {
+        return selectionMapper.selectCount(new LambdaQueryWrapper<Selection>()
+                .eq(Selection::getTopicid, topicId)
+                .eq(Selection::getStatus, SelectionStatusEnum.APPROVED.name()));
+    }
+
+    private Map<Long, Long> getSelectedCountMap(List<Topic> topics) {
+        if (topics.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        Set<Long> topicIds = topics.stream()
+                .map(Topic::getId)
+                .collect(Collectors.toSet());
+        return selectionMapper.selectList(new LambdaQueryWrapper<Selection>()
+                        .in(Selection::getTopicid, topicIds)
+                        .eq(Selection::getStatus, SelectionStatusEnum.APPROVED.name()))
+                .stream()
+                .collect(Collectors.groupingBy(
+                        Selection::getTopicid,
+                        Collectors.counting()
+                ));
+    }
+
+    private TopicVO toTopicVo(Topic topic, User teacher, long selectedCount) {
+        return TopicVO.fromTopic(topic, teacher, selectedCount);
     }
 
     private static String normalize(String value) {

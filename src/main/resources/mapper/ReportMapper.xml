@@ -7,9 +7,17 @@
     <resultMap id="BaseResultMap" type="org.lc.xsbysjbackend.model.entity.Report">
             <id property="id" column="id" />
             <result property="studentid" column="studentId" />
+            <result property="selectionid" column="selectionId" />
+            <result property="topicid" column="topicId" />
+            <result property="teacherid" column="teacherId" />
             <result property="documenttype" column="documentType" />
             <result property="filepath" column="filePath" />
+            <result property="filerecordid" column="fileRecordId" />
+            <result property="version" column="version" />
+            <result property="latest" column="isLatest" />
+            <result property="submittime" column="submitTime" />
             <result property="auditstatus" column="auditStatus" />
+            <result property="reviewerid" column="reviewerId" />
             <result property="auditcomment" column="auditComment" />
             <result property="reviewtime" column="reviewTime" />
             <result property="createtime" column="createTime" />
@@ -18,7 +26,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,studentId,documentType,filePath,auditStatus,auditComment,
-        reviewTime,createTime,EditTime,UpdateTime
+        id,studentId,selectionId,topicId,teacherId,documentType,filePath,
+        fileRecordId,version,isLatest,submitTime,auditStatus,reviewerId,
+        auditComment,reviewTime,createTime,EditTime,UpdateTime
     </sql>
 </mapper>

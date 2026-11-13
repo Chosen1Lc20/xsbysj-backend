@@ -19,6 +19,7 @@ import org.lc.xsbysjbackend.model.dto.user.UserQueryRequest;
 import org.lc.xsbysjbackend.model.dto.user.UserRegisterRequest;
 import org.lc.xsbysjbackend.model.dto.user.UserUpdateRequest;
 import org.lc.xsbysjbackend.model.entity.User;
+import org.lc.xsbysjbackend.model.vo.TeacherOptionVO;
 import org.lc.xsbysjbackend.model.vo.UserVO;
 import org.lc.xsbysjbackend.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * 用户接口。
@@ -99,6 +102,12 @@ public class UserController {
     @GetMapping("/get/vo")
     public BaseResponse<UserVO> getUserVoById(@RequestParam long id) {
         return ResultUtils.success(userService.getUserVoById(id));
+    }
+
+    @SaCheckPermission(PermissionConstant.USER_TEACHER_LIST)
+    @GetMapping("/teachers")
+    public BaseResponse<List<TeacherOptionVO>> listTeacherOptions() {
+        return ResultUtils.success(userService.listTeacherOptions());
     }
 
     @PostMapping("/update")

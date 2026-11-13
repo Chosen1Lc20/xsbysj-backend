@@ -40,6 +40,21 @@ public class Selection {
     private String status;
 
     /**
+     * 审核教师主键
+     */
+    private Long reviewerid;
+
+    /**
+     * 审核意见
+     */
+    private String auditcomment;
+
+    /**
+     * 审核时间
+     */
+    private Date reviewtime;
+
+    /**
      * 创建时间
      */
     private Date createtime;
@@ -71,6 +86,9 @@ public class Selection {
             && (this.getTopicid() == null ? other.getTopicid() == null : this.getTopicid().equals(other.getTopicid()))
             && (this.getSelectiontime() == null ? other.getSelectiontime() == null : this.getSelectiontime().equals(other.getSelectiontime()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
+            && (this.getReviewerid() == null ? other.getReviewerid() == null : this.getReviewerid().equals(other.getReviewerid()))
+            && (this.getAuditcomment() == null ? other.getAuditcomment() == null : this.getAuditcomment().equals(other.getAuditcomment()))
+            && (this.getReviewtime() == null ? other.getReviewtime() == null : this.getReviewtime().equals(other.getReviewtime()))
             && (this.getCreatetime() == null ? other.getCreatetime() == null : this.getCreatetime().equals(other.getCreatetime()))
             && (this.getEdittime() == null ? other.getEdittime() == null : this.getEdittime().equals(other.getEdittime()))
             && (this.getUpdatetime() == null ? other.getUpdatetime() == null : this.getUpdatetime().equals(other.getUpdatetime()));
@@ -85,6 +103,9 @@ public class Selection {
         result = prime * result + ((getTopicid() == null) ? 0 : getTopicid().hashCode());
         result = prime * result + ((getSelectiontime() == null) ? 0 : getSelectiontime().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
+        result = prime * result + ((getReviewerid() == null) ? 0 : getReviewerid().hashCode());
+        result = prime * result + ((getAuditcomment() == null) ? 0 : getAuditcomment().hashCode());
+        result = prime * result + ((getReviewtime() == null) ? 0 : getReviewtime().hashCode());
         result = prime * result + ((getCreatetime() == null) ? 0 : getCreatetime().hashCode());
         result = prime * result + ((getEdittime() == null) ? 0 : getEdittime().hashCode());
         result = prime * result + ((getUpdatetime() == null) ? 0 : getUpdatetime().hashCode());
@@ -102,6 +123,9 @@ public class Selection {
         sb.append(", topicid=").append(topicid);
         sb.append(", selectiontime=").append(selectiontime);
         sb.append(", status=").append(status);
+        sb.append(", reviewerid=").append(reviewerid);
+        sb.append(", auditcomment=").append(auditcomment);
+        sb.append(", reviewtime=").append(reviewtime);
         sb.append(", createtime=").append(createtime);
         sb.append(", edittime=").append(edittime);
         sb.append(", updatetime=").append(updatetime);

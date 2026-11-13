@@ -8,7 +8,10 @@ import org.lc.xsbysjbackend.model.dto.user.UserLoginRequest;
 import org.lc.xsbysjbackend.model.dto.user.UserQueryRequest;
 import org.lc.xsbysjbackend.model.dto.user.UserRegisterRequest;
 import org.lc.xsbysjbackend.model.dto.user.UserUpdateRequest;
+import org.lc.xsbysjbackend.model.vo.TeacherOptionVO;
 import org.lc.xsbysjbackend.model.vo.UserVO;
+
+import java.util.List;
 
 /**
 * @author lianchao0921
@@ -74,5 +77,10 @@ public interface UserService extends IService<User> {
      * 判断用户是否为管理员。
      */
     boolean isAdmin(User user);
+
+    /**
+     * 获取教师筛选列表。
+     */
+    List<TeacherOptionVO> listTeacherOptions();
 
 }

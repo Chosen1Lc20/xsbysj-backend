@@ -84,6 +84,8 @@
 .\mvnw.cmd package
 ```
 
+- 后续如果有新的权限，记得补充到 `src/main/resources/biz/permission.json` 文件中。
+
 ## 数据库结构维护
 
 - 表结构的唯一权威定义文件是仓库根目录下的 `sql/create_table.sql`。
@@ -100,5 +102,9 @@
 - 结构变更记录：2026-11-12 新增 `file_record` 表，用于记录上传用户、COS 对象键、访问地址、文件类型、扩展名、原始文件名、文件大小和媒体类型。
 - 结构变更记录：2026-11-12 为 `topic` 表新增 `reviewerId`、`auditComment`、`reviewTime` 字段，用于保存课题审核信息。
 - 结构变更记录：2026-11-12 将 `user.dept` 重命名为 `user.department`，字段含义由“部门”调整为“院系”，并同步更新实体、DTO、VO 与 Mapper。
+- 结构变更记录：2026-11-12 为 `selection` 表新增 `reviewerId`、`auditComment`、`reviewTime` 字段，用于保存选题审核信息。
+- 结构变更记录：2026-11-12 为 `assignment` 表新增 `selectionId`、`teacherId`、`title`、`fileRecordId`、`deadline`、`status` 字段，并将 `issueTime` 调整为可空，用于支持按选题创建、下发和关联附件的任务书。
+- 结构变更记录：2026-11-13 为 `report` 表新增 `selectionId`、`topicId`、`teacherId`、`fileRecordId`、`version`、`isLatest`、`submitTime`、`reviewerId` 字段，并添加选题文档版本唯一索引，用于支持过程文档提交、版本历史和教师审核。
+- 结构变更记录：2026-11-13 删除原 `defense` 表，新建 `defense_group`、`defense_group_teacher`、`defense_group_student` 三张表，用于支持答辩组、答辩教师和学生选题的多对多分配。
 
 提交代码前至少保证项目能够通过编译；涉及数据库或接口的改动应补充对应测试。不要在 `pom.xml` 中添加与 Maven 自身运行环境相关的 Guice 或 `maven-core` 依赖。

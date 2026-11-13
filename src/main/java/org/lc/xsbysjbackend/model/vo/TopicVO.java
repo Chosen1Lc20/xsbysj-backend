@@ -29,6 +29,10 @@ public class TopicVO implements Serializable {
 
     private Integer maxStudents;
 
+    private Long selectedCount;
+
+    private Integer remainingSlots;
+
     private String status;
 
     private Long reviewerId;
@@ -43,7 +47,7 @@ public class TopicVO implements Serializable {
 
     private Date updateTime;
 
-    public static TopicVO fromTopic(Topic topic, User teacher) {
+    public static TopicVO fromTopic(Topic topic, User teacher, long selectedCount) {
         TopicVO topicVO = new TopicVO();
         topicVO.setId(topic.getId());
         topicVO.setTeacherId(topic.getTeacherid());
@@ -55,6 +59,8 @@ public class TopicVO implements Serializable {
         topicVO.setDescription(topic.getDescription());
         topicVO.setType(topic.getType());
         topicVO.setMaxStudents(topic.getMaxstudents());
+        topicVO.setSelectedCount(selectedCount);
+        topicVO.setRemainingSlots((int) Math.max(0, topic.getMaxstudents() - selectedCount));
         topicVO.setStatus(topic.getStatus());
         topicVO.setReviewerId(topic.getReviewerid());
         topicVO.setAuditComment(topic.getAuditcomment());
