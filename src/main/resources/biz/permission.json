@@ -10,7 +10,8 @@
     "assignment:read",
     "document:submit",
     "document:read",
-    "defense:read"
+    "defense:read",
+    "score:read"
   ],
   "teacher": [
     "user:teacher:list",
@@ -30,7 +31,9 @@
     "assignment:read",
     "document:review",
     "document:read",
-    "defense:read"
+    "defense:read",
+    "score:save",
+    "score:read"
   ],
   "admin": [
     "user:teacher:list",
@@ -48,6 +51,7 @@
     "defense:add",
     "defense:update",
     "defense:delete",
-    "defense:read"
+    "defense:read",
+    "score:read"
   ]
 }

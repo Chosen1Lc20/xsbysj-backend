@@ -7,9 +7,13 @@
     <resultMap id="BaseResultMap" type="org.lc.xsbysjbackend.model.entity.Score">
             <id property="id" column="id" />
             <result property="studentid" column="studentId" />
+            <result property="selectionid" column="selectionId" />
+            <result property="topicid" column="topicId" />
+            <result property="teacherid" column="teacherId" />
             <result property="processscore" column="processScore" />
             <result property="defensescore" column="defenseScore" />
             <result property="totalscore" column="totalScore" />
+            <result property="teachercomment" column="teacherComment" />
             <result property="entrytime" column="entryTime" />
             <result property="createtime" column="createTime" />
             <result property="edittime" column="EditTime" />
@@ -17,7 +21,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,studentId,processScore,defenseScore,totalScore,entryTime,
-        createTime,EditTime,UpdateTime
+        id,studentId,selectionId,topicId,teacherId,processScore,
+        defenseScore,totalScore,teacherComment,entryTime,createTime,
+        EditTime,UpdateTime
     </sql>
 </mapper>

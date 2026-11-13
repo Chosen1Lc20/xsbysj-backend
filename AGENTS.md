@@ -106,5 +106,6 @@
 - 结构变更记录：2026-11-12 为 `assignment` 表新增 `selectionId`、`teacherId`、`title`、`fileRecordId`、`deadline`、`status` 字段，并将 `issueTime` 调整为可空，用于支持按选题创建、下发和关联附件的任务书。
 - 结构变更记录：2026-11-13 为 `report` 表新增 `selectionId`、`topicId`、`teacherId`、`fileRecordId`、`version`、`isLatest`、`submitTime`、`reviewerId` 字段，并添加选题文档版本唯一索引，用于支持过程文档提交、版本历史和教师审核。
 - 结构变更记录：2026-11-13 删除原 `defense` 表，新建 `defense_group`、`defense_group_teacher`、`defense_group_student` 三张表，用于支持答辩组、答辩教师和学生选题的多对多分配。
+- 结构变更记录：2026-11-13 为 `score` 表新增 `selectionId`、`topicId`、`teacherId`、`teacherComment` 字段，并添加学生和选题唯一索引，用于支持指导教师录入成绩、填写评语及按角色查询。
 
 提交代码前至少保证项目能够通过编译；涉及数据库或接口的改动应补充对应测试。不要在 `pom.xml` 中添加与 Maven 自身运行环境相关的 Guice 或 `maven-core` 依赖。

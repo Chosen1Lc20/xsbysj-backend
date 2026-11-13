@@ -65,6 +65,10 @@ public interface PermissionConstant {
 
     String DEFENSE_READ = "defense:read";
 
+    String SCORE_SAVE = "score:save";
+
+    String SCORE_READ = "score:read";
+
     Set<String> ALL_PERMISSIONS = Set.of(
             USER_ADD,
             USER_DELETE,
@@ -94,6 +98,8 @@ public interface PermissionConstant {
             DEFENSE_ADD,
             DEFENSE_UPDATE,
             DEFENSE_DELETE,
-            DEFENSE_READ
+            DEFENSE_READ,
+            SCORE_SAVE,
+            SCORE_READ
     );
 }

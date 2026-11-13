@@ -575,3 +575,108 @@ CREATE TABLE IF NOT EXISTS `score` (
     PRIMARY KEY (`id`),
     KEY `idx_score_student` (`studentId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='成绩表';
+
+SET @add_score_selection_id = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'ALTER TABLE `score` ADD COLUMN `selectionId` BIGINT UNSIGNED NOT NULL COMMENT ''选题记录主键'' AFTER `studentId`',
+        'SELECT 1'
+    )
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'score'
+      AND COLUMN_NAME = 'selectionId'
+);
+PREPARE score_selection_stmt FROM @add_score_selection_id;
+EXECUTE score_selection_stmt;
+DEALLOCATE PREPARE score_selection_stmt;
+
+SET @add_score_topic_id = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'ALTER TABLE `score` ADD COLUMN `topicId` BIGINT UNSIGNED NOT NULL COMMENT ''课题主键'' AFTER `selectionId`',
+        'SELECT 1'
+    )
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'score'
+      AND COLUMN_NAME = 'topicId'
+);
+PREPARE score_topic_stmt FROM @add_score_topic_id;
+EXECUTE score_topic_stmt;
+DEALLOCATE PREPARE score_topic_stmt;
+
+SET @add_score_teacher_id = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'ALTER TABLE `score` ADD COLUMN `teacherId` BIGINT UNSIGNED NOT NULL COMMENT ''指导教师主键'' AFTER `topicId`',
+        'SELECT 1'
+    )
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'score'
+      AND COLUMN_NAME = 'teacherId'
+);
+PREPARE score_teacher_stmt FROM @add_score_teacher_id;
+EXECUTE score_teacher_stmt;
+DEALLOCATE PREPARE score_teacher_stmt;
+
+SET @add_score_teacher_comment = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'ALTER TABLE `score` ADD COLUMN `teacherComment` VARCHAR(1000) DEFAULT NULL COMMENT ''教师评语'' AFTER `totalScore`',
+        'SELECT 1'
+    )
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'score'
+      AND COLUMN_NAME = 'teacherComment'
+);
+PREPARE score_comment_stmt FROM @add_score_teacher_comment;
+EXECUTE score_comment_stmt;
+DEALLOCATE PREPARE score_comment_stmt;
+
+SET @add_score_student_unique = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'ALTER TABLE `score` ADD UNIQUE KEY `uk_score_student` (`studentId`)',
+        'SELECT 1'
+    )
+    FROM information_schema.STATISTICS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'score'
+      AND INDEX_NAME = 'uk_score_student'
+);
+PREPARE score_student_unique_stmt FROM @add_score_student_unique;
+EXECUTE score_student_unique_stmt;
+DEALLOCATE PREPARE score_student_unique_stmt;
+
+SET @add_score_selection_unique = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'ALTER TABLE `score` ADD UNIQUE KEY `uk_score_selection` (`selectionId`)',
+        'SELECT 1'
+    )
+    FROM information_schema.STATISTICS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'score'
+      AND INDEX_NAME = 'uk_score_selection'
+);
+PREPARE score_selection_unique_stmt FROM @add_score_selection_unique;
+EXECUTE score_selection_unique_stmt;
+DEALLOCATE PREPARE score_selection_unique_stmt;
+
+SET @add_score_teacher_index = (
+    SELECT IF(
+        COUNT(*) = 0,
+        'ALTER TABLE `score` ADD KEY `idx_score_teacher` (`teacherId`)',
+        'SELECT 1'
+    )
+    FROM information_schema.STATISTICS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'score'
+      AND INDEX_NAME = 'idx_score_teacher'
+);
+PREPARE score_teacher_index_stmt FROM @add_score_teacher_index;
+EXECUTE score_teacher_index_stmt;
+DEALLOCATE PREPARE score_teacher_index_stmt;

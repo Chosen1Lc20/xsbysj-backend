@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS `report`;
 DROP TABLE IF EXISTS `defense_group_teacher`;
 DROP TABLE IF EXISTS `defense_group_student`;
 DROP TABLE IF EXISTS `defense_group`;
+DROP TABLE IF EXISTS `score`;
 
 CREATE TABLE `user` (
     `id` BIGINT NOT NULL PRIMARY KEY,
@@ -142,6 +143,24 @@ CREATE TABLE `defense_group_student` (
     `EditTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `UpdateTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (`groupId`, `studentId`),
+    UNIQUE (`studentId`),
+    UNIQUE (`selectionId`)
+);
+
+CREATE TABLE `score` (
+    `id` BIGINT NOT NULL PRIMARY KEY,
+    `studentId` BIGINT NOT NULL,
+    `selectionId` BIGINT NOT NULL,
+    `topicId` BIGINT NOT NULL,
+    `teacherId` BIGINT NOT NULL,
+    `processScore` DECIMAL(4, 1),
+    `defenseScore` DECIMAL(4, 1),
+    `totalScore` DECIMAL(4, 1),
+    `teacherComment` VARCHAR(1000),
+    `entryTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `EditTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdateTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (`studentId`),
     UNIQUE (`selectionId`)
 );
